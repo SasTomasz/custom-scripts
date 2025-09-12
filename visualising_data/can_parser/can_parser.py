@@ -95,14 +95,6 @@ def plot_can(df: pd.DataFrame, out_html: str):
     fig = go.Figure()
 
     for can_id, g in df.groupby("can_id"):
-        # fig.add_trace(
-        #     go.Scatter(
-        #         x=g["timestamp"],
-        #         y=g["tns_g"],
-        #         mode="lines",
-        #         name=f"{can_id} - tns (g)",
-        #     )
-        # )
         fig.add_trace(
             go.Scatter(
                 x=g["timestamp"],
@@ -117,7 +109,6 @@ def plot_can(df: pd.DataFrame, out_html: str):
     fig.update_layout(
         title="CAN Data",
         xaxis_title="Time",
-        # yaxis=dict(title="tns (g)"),
         yaxis2=dict(title="tnscal (kg)", overlaying="y", side="right"),
         legend=dict(orientation="h"),
     )

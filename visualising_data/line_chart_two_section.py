@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 # Path to your log file
-log_file = "data.txt"
+log_file = "example_data.txt"
 
 # Regex to extract timestamp and weights
 pattern = re.compile(r"(\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \| ST0=\[(.*)kg, (.*)kg\]")
