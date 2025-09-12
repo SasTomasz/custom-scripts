@@ -1,8 +1,11 @@
 import re
 import sys
+import os
+import glob
 import pandas as pd
 from datetime import datetime, timedelta
 import plotly.graph_objects as go
+from show_can_plot import save_plot as pl
 
 # -------------------------------------------------------------
 # Helpers
@@ -122,11 +125,28 @@ def plot_can(df: pd.DataFrame, out_html: str):
 # -------------------------------------------------------------
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python can_parser.py file1.trc [file2.trc ...]")
+        print("Usage: python can_parser.py <folder_with_trc_files> OR file1.trc [file2.trc ...]")
         sys.exit(1)
 
+    input_path = sys.argv[1]
+    files_to_parse = []
+
+    if os.path.isdir(input_path):
+        # If it's a folder, find all .trc files inside
+        files_to_parse = glob.glob(os.path.join(input_path, "*.trc"))
+        if not files_to_parse:
+            print(f"No .trc files found in folder: {input_path}")
+            sys.exit(1)
+    else:
+        # Assume all arguments are individual .trc files
+        files_to_parse = sys.argv[1:]
+        for f in files_to_parse:
+            if not os.path.isfile(f) or not f.lower().endswith(".trc"):
+                print(f"Invalid file or extension: {f}")
+                sys.exit(1)
+
     all_df = []
-    for path in sys.argv[1:]:
+    for path in files_to_parse:
         df = parse_trc_file(path)
         print(f"Parsed {len(df)} rows from {path}")
         all_df.append(df)
@@ -138,5 +158,9 @@ if __name__ == "__main__":
     df_all.to_csv("can_data.csv", index=False)
     print("CSV saved to can_data.csv")
 
+    # Filter data before creating plot
+    filtered_df = df_all[(df_all["can_id"] == "0100")]
+
     # Save plot
-    plot_can(df_all, "can_plot.html")
+    # plot_can(filtered_df, "can_plot.html")
+    pl(filtered_df)
